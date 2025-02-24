@@ -61,4 +61,7 @@ dependencies {
     // Retrofit for networking
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
+
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android) // For Android-specific coroutine support
 }
