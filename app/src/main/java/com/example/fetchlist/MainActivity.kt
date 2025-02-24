@@ -1,47 +1,66 @@
 package com.example.fetchlist
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.fetchlist.ui.theme.FetchListTheme
+import android.view.View
+import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.fetchlist.adapter.ItemAdapter
+import com.example.fetchlist.databinding.ActivityMainBinding
+import com.example.fetchlist.repository.ItemRepository
+import com.example.fetchlist.viewmodel.ItemViewModel
+import com.example.fetchlist.viewmodel.ItemViewModelFactory
+import com.example.fetchlist.viewmodel.Result
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+    private val viewModel: ItemViewModel by viewModels {
+        ItemViewModelFactory(ItemRepository())
+    }
+    private lateinit var adapter: ItemAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            FetchListTheme {
-                Scaffold( modifier = Modifier.fillMaxSize() ) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+
+        // Inflate the layout
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // Setup RecyclerView
+        adapter = ItemAdapter()
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = adapter
+
+        // Observe LiveData
+        viewModel.items.observe(this) { result ->
+            when (result) {
+                is Result.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.recyclerView.visibility = View.GONE
+                    binding.errorText.visibility = View.GONE
+                }
+                is Result.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.recyclerView.visibility = View.VISIBLE
+                    binding.errorText.visibility = View.GONE
+                    adapter.submitList(result.data.toList())
+                }
+                is Result.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.recyclerView.visibility = View.GONE
+                    binding.errorText.visibility = View.VISIBLE
+                    binding.errorText.text = result.message
+                    Toast.makeText(this, result.message, Toast.LENGTH_LONG).show()
                 }
             }
         }
-    }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    FetchListTheme {
-        Greeting("Android")
+        // Swipe to Refresh (Optional)
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.fetchItems()
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
     }
 }
