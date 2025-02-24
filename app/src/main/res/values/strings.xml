@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Fetch List</string>
+    <string name="error_loading_data">Error loading data</string>
 </resources>
