@@ -2,6 +2,12 @@
 
 An Android application that displays a list of items grouped within specific lists.
 
+## Future Improvements
+
+1. Implement a grouping mechanism for easier navigation between groups.
+2. Implement a search functionality.
+3. Implement accessibility features.
+
 ## Installation
 
 
@@ -19,3 +25,6 @@ An Android application that displays a list of items grouped within specific lis
    - Run the app on an emulator or physical device.
 
 ## Demo
+
+<video src="https://github.com/user-attachments/assets/f40e6752-45b5-4dbd-9799-580ee365e1eb">
+</video>
