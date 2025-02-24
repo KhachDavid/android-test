@@ -67,4 +67,12 @@ dependencies {
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android) // For Android-specific coroutine support
+
+    testImplementation(libs.junit)
+    testImplementation(libs.androidx.arch.core.testing) // For LiveData & ViewModel testing
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockito.core)   // Mockito core library
+    testImplementation(libs.mockito.kotlin) // Mockito-Kotlin for Kotlin-specific mocking
+    testImplementation(libs.mockito.inline) // Mockito-inline for final class mocking
+    testImplementation(libs.byte.buddy)  // ✅ Fix Byte Buddy issue for Java 21
 }

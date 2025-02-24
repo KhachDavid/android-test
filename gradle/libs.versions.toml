@@ -13,6 +13,12 @@ kotlinxCoroutinesAndroid = "1.7.3"
 swiperefreshlayout = "1.1.0"
 recyclerview = "1.4.0"
 appcompat = "1.7.0"
+archCoreTesting = "2.2.0"
+coroutinesTest = "1.7.1"
+mockito = "4.5.1"
+mockitoInline = "4.5.1"
+mockitoKotlin = "4.0.0"
+byteBuddy = "1.14.6" # Updated Byte Buddy to support Java 21 ✅
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -37,6 +43,12 @@ androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "s
 androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
+androidx-arch-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "archCoreTesting" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutinesTest" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
+byte-buddy = { module = "net.bytebuddy:byte-buddy", version.ref = "byteBuddy" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
