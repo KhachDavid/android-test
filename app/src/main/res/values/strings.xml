@@ -3,4 +3,5 @@
     <string name="error_loading_data">Error loading data</string>
     <string name="list_1">List 1</string>
     <string name="item_1">Item 1</string>
+    <string name="retry">Retry</string>
 </resources>

@@ -1,8 +1,11 @@
 package com.example.fetchlist
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
+import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -33,34 +36,60 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
 
+        // Initialize Error Layout Views
+        val retryButton: Button = binding.retryButton
+
+        // Handle Retry Button Click
+        retryButton.setOnClickListener {
+            viewModel.fetchItems()
+        }
+
         // Observe LiveData
         viewModel.items.observe(this) { result ->
             when (result) {
                 is Result.Loading -> {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.recyclerView.visibility = View.GONE
-                    binding.errorText.visibility = View.GONE
+                    binding.errorLayout.visibility = View.GONE
                 }
                 is Result.Success -> {
                     binding.progressBar.visibility = View.GONE
                     binding.recyclerView.visibility = View.VISIBLE
-                    binding.errorText.visibility = View.GONE
+                    binding.errorLayout.visibility = View.GONE
                     adapter.submitList(result.data.toList())
                 }
                 is Result.Error -> {
-                    binding.progressBar.visibility = View.GONE
-                    binding.recyclerView.visibility = View.GONE
-                    binding.errorText.visibility = View.VISIBLE
-                    binding.errorText.text = result.message
-                    Toast.makeText(this, result.message, Toast.LENGTH_LONG).show()
+                    handleFailure(result.message)
                 }
             }
         }
 
-        // Swipe to Refresh (Optional)
+        // Swipe to Refresh
         binding.swipeRefreshLayout.setOnRefreshListener {
             viewModel.fetchItems()
             binding.swipeRefreshLayout.isRefreshing = false
         }
+    }
+
+    private fun handleFailure(errorMessage: String) {
+        binding.progressBar.visibility = View.GONE
+        binding.recyclerView.visibility = View.GONE
+        binding.errorLayout.visibility = View.VISIBLE
+
+        binding.errorText.text = if (!isInternetAvailable(this)) {
+            "No internet connection. Please check your network and try again."
+        } else {
+            "Server error: $errorMessage"
+        }
+    }
+
+    // Check for Internet Connection
+    private fun isInternetAvailable(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork ?: return false
+        val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+        return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
     }
 }
